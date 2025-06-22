@@ -5,6 +5,7 @@ const hcgInput = document.getElementById('hcg-date');
 const etInput = document.getElementById('et-date');
 const clearBtn = document.getElementById('clear-btn');
 const calendarGrid = document.getElementById('calendar-grid');
+const calendar = document.getElementById('calendar');
 
 menstruationInput.addEventListener('input', (e) => {
     formatInput(e.target);
@@ -217,10 +218,11 @@ function calculateSchedule() {
         });
     }
     
-    displayCalendar();
+    displayListCalendar();
+    displayMonthCalendar();
 }
 
-function displayCalendar() {
+function displayListCalendar() {
     calendarGrid.innerHTML = '';
     
     if (scheduleEvents.length === 0) return;
@@ -295,9 +297,74 @@ function displayCalendar() {
     }
 }
 
+function displayMonthCalendar() {
+    calendar.innerHTML = '';
+    
+    if (scheduleEvents.length === 0) return;
+    
+    const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
+    weekDays.forEach(day => {
+        const header = document.createElement('div');
+        header.className = 'calendar-header';
+        header.textContent = day;
+        calendar.appendChild(header);
+    });
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const startDate = new Date(scheduleEvents[0].date);
+    startDate.setDate(1);
+    const endDate = addDays(scheduleEvents[scheduleEvents.length - 1].date, 7);
+    
+    const firstDay = startDate.getDay();
+    
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day other-month';
+        calendar.appendChild(emptyDay);
+    }
+    
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day';
+        
+        if (currentDate.getMonth() !== startDate.getMonth()) {
+            dayDiv.classList.add('other-month');
+        }
+        
+        const dayNumber = document.createElement('div');
+        dayNumber.className = 'calendar-day-number';
+        dayNumber.textContent = currentDate.getDate();
+        dayDiv.appendChild(dayNumber);
+        
+        const event = scheduleEvents.find(e => 
+            e.date.getFullYear() === currentDate.getFullYear() &&
+            e.date.getMonth() === currentDate.getMonth() &&
+            e.date.getDate() === currentDate.getDate()
+        );
+        
+        if (event) {
+            dayDiv.classList.add('has-event');
+            if (event.highlight) {
+                dayDiv.classList.add('highlight-event');
+            }
+            const eventDiv = document.createElement('div');
+            eventDiv.className = 'calendar-event';
+            eventDiv.textContent = event.event;
+            dayDiv.appendChild(eventDiv);
+        }
+        
+        calendar.appendChild(dayDiv);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+}
+
 function clearSchedule() {
     scheduleEvents = [];
     calendarGrid.innerHTML = '';
+    calendar.innerHTML = '';
 }
 
 function clearAll() {

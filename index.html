@@ -12,30 +12,26 @@
         
         <div class="input-section">
             <h2>日付を入力してください</h2>
-            <div class="input-group">
-                <label for="menstruation-date">生理開始日 (MM/DD)</label>
-                <input type="text" id="menstruation-date" placeholder="01/15" maxlength="5" pattern="\d{2}/\d{2}">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="menstruation-date">生理開始日</label>
+                    <input type="text" id="menstruation-date" placeholder="01/15" maxlength="5" pattern="\d{2}/\d{2}">
+                </div>
+                <div class="input-group">
+                    <label for="hcg-date">hCG注射日</label>
+                    <input type="text" id="hcg-date" placeholder="01/26" maxlength="5" pattern="\d{2}/\d{2}">
+                </div>
+                <div class="input-group">
+                    <label for="et-date">移植日ET0</label>
+                    <input type="text" id="et-date" placeholder="01/29" maxlength="5" pattern="\d{2}/\d{2}">
+                </div>
             </div>
-            <div class="input-group">
-                <label for="hcg-date">hCG注射日 (MM/DD)</label>
-                <input type="text" id="hcg-date" placeholder="01/26" maxlength="5" pattern="\d{2}/\d{2}">
-            </div>
-            <div class="input-group">
-                <label for="et-date">移植日ET0 (MM/DD)</label>
-                <input type="text" id="et-date" placeholder="01/29" maxlength="5" pattern="\d{2}/\d{2}">
-            </div>
-            <button id="calculate-btn">スケジュールを計算</button>
             <button id="clear-btn">クリア</button>
         </div>
 
-        <div class="schedule-section">
-            <h2>スケジュール</h2>
-            <div id="schedule-list"></div>
-        </div>
-
         <div class="calendar-section">
-            <h2>カレンダー</h2>
-            <div id="calendar"></div>
+            <h2>30日間のスケジュール</h2>
+            <div id="calendar-grid"></div>
         </div>
     </div>
 

@@ -14,46 +14,54 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
 }
 
 h1 {
     text-align: center;
     color: #2c3e50;
-    margin-bottom: 40px;
-    font-size: 2rem;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
     font-weight: 300;
 }
 
 h2 {
     color: #34495e;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
     font-weight: 400;
 }
 
 .input-section {
     background: white;
-    padding: 30px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
-}
-
-.input-group {
     margin-bottom: 20px;
 }
 
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
 .input-group label {
-    display: block;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     color: #555;
     font-weight: 500;
+    font-size: 0.9rem;
 }
 
 .input-group input {
-    width: 150px;
-    padding: 12px;
+    width: 100%;
+    padding: 10px;
     border: 2px solid #e0e0e0;
     border-radius: 6px;
     font-size: 16px;
@@ -68,124 +76,99 @@ h2 {
 .input-group input:disabled {
     background-color: #f5f5f5;
     cursor: not-allowed;
+    opacity: 0.6;
 }
 
 button {
-    padding: 12px 24px;
-    margin-right: 10px;
+    padding: 10px 20px;
     border: none;
     border-radius: 6px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     transition: all 0.3s;
 }
 
-#calculate-btn {
-    background-color: #3498db;
-    color: white;
-}
-
-#calculate-btn:hover {
-    background-color: #2980b9;
-}
-
 #clear-btn {
-    background-color: #ecf0f1;
-    color: #333;
+    background-color: #e74c3c;
+    color: white;
+    width: 100%;
 }
 
 #clear-btn:hover {
-    background-color: #bdc3c7;
+    background-color: #c0392b;
 }
 
-.schedule-section, .calendar-section {
+.calendar-section {
     background: white;
-    padding: 30px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
 }
 
-#schedule-list {
+#calendar-grid {
     display: grid;
-    gap: 15px;
-}
-
-.schedule-item {
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-left: 4px solid #3498db;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.schedule-item.highlight {
-    background-color: #e8f4fd;
-    border-left-color: #2980b9;
-}
-
-.schedule-date {
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.schedule-event {
-    color: #555;
-}
-
-#calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
     gap: 10px;
-    margin-top: 20px;
 }
 
-.calendar-header {
-    padding: 10px;
-    text-align: center;
-    font-weight: 600;
-    color: #34495e;
-    background-color: #ecf0f1;
-    border-radius: 4px;
-}
-
-.calendar-day {
-    aspect-ratio: 1;
-    padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
+.calendar-day-item {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    padding: 15px;
     background-color: white;
-    position: relative;
-    min-height: 80px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s;
 }
 
-.calendar-day.other-month {
-    background-color: #f8f9fa;
-    color: #bdc3c7;
-}
-
-.calendar-day.has-event {
+.calendar-day-item.has-event {
     background-color: #e8f4fd;
     border-color: #3498db;
 }
 
-.calendar-day-number {
-    font-weight: 600;
-    margin-bottom: 5px;
+.calendar-day-item.highlight-event {
+    background-color: #fff3cd;
+    border-color: #ffc107;
 }
 
-.calendar-event {
-    font-size: 10px;
+.date-info {
+    flex: 0 0 80px;
+    margin-right: 15px;
+}
+
+.date-number {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.date-weekday {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.event-info {
+    flex: 1;
+}
+
+.event-text {
+    font-size: 0.9rem;
     color: #2980b9;
-    text-align: center;
-    line-height: 1.2;
-    word-break: break-word;
+    font-weight: 500;
+}
+
+.no-event {
+    color: #bdc3c7;
+    font-size: 0.85rem;
+}
+
+.today {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.past-date .date-number,
+.past-date .date-weekday {
+    color: #bdc3c7;
 }
 
 @media (max-width: 768px) {
@@ -195,23 +178,47 @@ button {
     
     h1 {
         font-size: 1.5rem;
+        margin-bottom: 15px;
     }
     
-    .input-section, .schedule-section, .calendar-section {
-        padding: 20px;
+    h2 {
+        font-size: 1.1rem;
     }
     
-    #calendar {
-        gap: 5px;
+    .input-section, .calendar-section {
+        padding: 15px;
     }
     
-    .calendar-day {
-        font-size: 12px;
-        padding: 5px;
-        min-height: 60px;
+    .input-grid {
+        grid-template-columns: 1fr;
     }
     
-    .calendar-event {
-        font-size: 8px;
+    #calendar-grid {
+        gap: 8px;
+    }
+    
+    .calendar-day-item {
+        padding: 12px;
+    }
+    
+    .date-info {
+        flex: 0 0 60px;
+        margin-right: 10px;
+    }
+    
+    .date-number {
+        font-size: 1.2rem;
+    }
+    
+    .date-weekday {
+        font-size: 0.75rem;
+    }
+    
+    .event-text {
+        font-size: 0.85rem;
+    }
+    
+    .no-event {
+        font-size: 0.8rem;
     }
 }

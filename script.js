@@ -3,10 +3,8 @@ let scheduleEvents = [];
 const menstruationInput = document.getElementById('menstruation-date');
 const hcgInput = document.getElementById('hcg-date');
 const etInput = document.getElementById('et-date');
-const calculateBtn = document.getElementById('calculate-btn');
 const clearBtn = document.getElementById('clear-btn');
-const scheduleList = document.getElementById('schedule-list');
-const calendar = document.getElementById('calendar');
+const calendarGrid = document.getElementById('calendar-grid');
 
 menstruationInput.addEventListener('input', (e) => {
     formatInput(e.target);
@@ -15,6 +13,7 @@ menstruationInput.addEventListener('input', (e) => {
         calculateSchedule();
     }
 });
+
 hcgInput.addEventListener('input', (e) => {
     formatInput(e.target);
     disableOtherInputs('hcg');
@@ -22,11 +21,32 @@ hcgInput.addEventListener('input', (e) => {
         calculateSchedule();
     }
 });
+
 etInput.addEventListener('input', (e) => {
     formatInput(e.target);
     disableOtherInputs('et');
     if (e.target.value.match(/^\d{2}\/\d{2}$/)) {
         calculateSchedule();
+    }
+});
+
+clearBtn.addEventListener('click', clearAll);
+
+menstruationInput.addEventListener('focus', () => {
+    if (!menstruationInput.disabled) {
+        clearSchedule();
+    }
+});
+
+hcgInput.addEventListener('focus', () => {
+    if (!hcgInput.disabled) {
+        clearSchedule();
+    }
+});
+
+etInput.addEventListener('focus', () => {
+    if (!etInput.disabled) {
+        clearSchedule();
     }
 });
 
@@ -37,19 +57,23 @@ function formatInput(input) {
     }
     input.value = value;
 }
-calculateBtn.addEventListener('click', calculateSchedule);
-clearBtn.addEventListener('click', clearAll);
 
 function disableOtherInputs(activeInput) {
     if (activeInput === 'menstruation' && menstruationInput.value) {
         hcgInput.disabled = true;
         etInput.disabled = true;
+        hcgInput.value = '';
+        etInput.value = '';
     } else if (activeInput === 'hcg' && hcgInput.value) {
         menstruationInput.disabled = true;
         etInput.disabled = true;
+        menstruationInput.value = '';
+        etInput.value = '';
     } else if (activeInput === 'et' && etInput.value) {
         menstruationInput.disabled = true;
         hcgInput.disabled = true;
+        menstruationInput.value = '';
+        hcgInput.value = '';
     } else {
         menstruationInput.disabled = false;
         hcgInput.disabled = false;
@@ -81,12 +105,6 @@ function parseMMDD(mmdd) {
     return date;
 }
 
-function formatDate(date) {
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${month}/${day}`;
-}
-
 function addDays(date, days) {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
@@ -110,14 +128,14 @@ function calculateSchedule() {
     }
     
     if (!baseDate) {
-        alert('日付を入力してください（MM/DD形式）');
         return;
     }
     
     if (baseDateType === 'menstruation') {
         scheduleEvents.push({
             date: addDays(baseDate, 11),
-            event: '生理D12 卵胞チェック、hCG注射'
+            event: '生理D12 卵胞チェック、hCG注射',
+            highlight: true
         });
         scheduleEvents.push({
             date: addDays(baseDate, 12),
@@ -129,7 +147,8 @@ function calculateSchedule() {
         });
         scheduleEvents.push({
             date: addDays(baseDate, 14),
-            event: '移植日ET0'
+            event: '移植日ET0',
+            highlight: true
         });
         scheduleEvents.push({
             date: addDays(baseDate, 26),
@@ -137,12 +156,14 @@ function calculateSchedule() {
         });
         scheduleEvents.push({
             date: addDays(baseDate, 29),
-            event: '移植日ET15（BT12判定日）'
+            event: '移植日ET15（BT12判定日）',
+            highlight: true
         });
     } else if (baseDateType === 'hcg') {
         scheduleEvents.push({
             date: baseDate,
-            event: '生理D12 卵胞チェック、hCG注射'
+            event: '生理D12 卵胞チェック、hCG注射',
+            highlight: true
         });
         scheduleEvents.push({
             date: addDays(baseDate, 1),
@@ -154,7 +175,8 @@ function calculateSchedule() {
         });
         scheduleEvents.push({
             date: addDays(baseDate, 3),
-            event: '移植日ET0'
+            event: '移植日ET0',
+            highlight: true
         });
         scheduleEvents.push({
             date: addDays(baseDate, 15),
@@ -162,12 +184,14 @@ function calculateSchedule() {
         });
         scheduleEvents.push({
             date: addDays(baseDate, 18),
-            event: '移植日ET15（BT12判定日）'
+            event: '移植日ET15（BT12判定日）',
+            highlight: true
         });
     } else if (baseDateType === 'et') {
         scheduleEvents.push({
             date: addDays(baseDate, -3),
-            event: '生理D12 卵胞チェック、hCG注射'
+            event: '生理D12 卵胞チェック、hCG注射',
+            highlight: true
         });
         scheduleEvents.push({
             date: addDays(baseDate, -2),
@@ -179,7 +203,8 @@ function calculateSchedule() {
         });
         scheduleEvents.push({
             date: baseDate,
-            event: '移植日ET0'
+            event: '移植日ET0',
+            highlight: true
         });
         scheduleEvents.push({
             date: addDays(baseDate, 12),
@@ -187,73 +212,31 @@ function calculateSchedule() {
         });
         scheduleEvents.push({
             date: addDays(baseDate, 15),
-            event: '移植日ET15（BT12判定日）'
+            event: '移植日ET15（BT12判定日）',
+            highlight: true
         });
     }
     
-    displaySchedule();
     displayCalendar();
 }
 
-function displaySchedule() {
-    scheduleList.innerHTML = '';
-    
-    scheduleEvents.forEach(event => {
-        const item = document.createElement('div');
-        item.className = 'schedule-item';
-        
-        const dateDiv = document.createElement('div');
-        dateDiv.className = 'schedule-date';
-        dateDiv.textContent = `${event.date.getFullYear()}年${event.date.getMonth() + 1}月${event.date.getDate()}日`;
-        
-        const eventDiv = document.createElement('div');
-        eventDiv.className = 'schedule-event';
-        eventDiv.textContent = event.event;
-        
-        item.appendChild(dateDiv);
-        item.appendChild(eventDiv);
-        scheduleList.appendChild(item);
-    });
-}
-
 function displayCalendar() {
-    calendar.innerHTML = '';
-    
-    const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
-    weekDays.forEach(day => {
-        const header = document.createElement('div');
-        header.className = 'calendar-header';
-        header.textContent = day;
-        calendar.appendChild(header);
-    });
+    calendarGrid.innerHTML = '';
     
     if (scheduleEvents.length === 0) return;
     
-    const startDate = new Date(scheduleEvents[0].date);
-    startDate.setDate(1);
-    const endDate = addDays(scheduleEvents[scheduleEvents.length - 1].date, 7);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     
-    const firstDay = startDate.getDay();
+    const startDate = new Date(today);
+    const endDate = addDays(startDate, 30);
     
-    for (let i = 0; i < firstDay; i++) {
-        const emptyDay = document.createElement('div');
-        emptyDay.className = 'calendar-day other-month';
-        calendar.appendChild(emptyDay);
-    }
+    const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
     
     const currentDate = new Date(startDate);
-    while (currentDate <= endDate) {
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'calendar-day';
-        
-        if (currentDate.getMonth() !== startDate.getMonth()) {
-            dayDiv.classList.add('other-month');
-        }
-        
-        const dayNumber = document.createElement('div');
-        dayNumber.className = 'calendar-day-number';
-        dayNumber.textContent = currentDate.getDate();
-        dayDiv.appendChild(dayNumber);
+    while (currentDate < endDate) {
+        const dayItem = document.createElement('div');
+        dayItem.className = 'calendar-day-item';
         
         const event = scheduleEvents.find(e => 
             e.date.getFullYear() === currentDate.getFullYear() &&
@@ -262,16 +245,59 @@ function displayCalendar() {
         );
         
         if (event) {
-            dayDiv.classList.add('has-event');
-            const eventDiv = document.createElement('div');
-            eventDiv.className = 'calendar-event';
-            eventDiv.textContent = event.event;
-            dayDiv.appendChild(eventDiv);
+            dayItem.classList.add('has-event');
+            if (event.highlight) {
+                dayItem.classList.add('highlight-event');
+            }
         }
         
-        calendar.appendChild(dayDiv);
+        if (currentDate < today) {
+            dayItem.classList.add('past-date');
+        }
+        
+        const dateInfo = document.createElement('div');
+        dateInfo.className = 'date-info';
+        
+        const dateNumber = document.createElement('div');
+        dateNumber.className = 'date-number';
+        if (currentDate.toDateString() === today.toDateString()) {
+            dateNumber.classList.add('today');
+        }
+        dateNumber.textContent = currentDate.getDate();
+        
+        const dateWeekday = document.createElement('div');
+        dateWeekday.className = 'date-weekday';
+        dateWeekday.textContent = `${currentDate.getMonth() + 1}月 ${weekDays[currentDate.getDay()]}`;
+        
+        dateInfo.appendChild(dateNumber);
+        dateInfo.appendChild(dateWeekday);
+        
+        const eventInfo = document.createElement('div');
+        eventInfo.className = 'event-info';
+        
+        if (event) {
+            const eventText = document.createElement('div');
+            eventText.className = 'event-text';
+            eventText.textContent = event.event;
+            eventInfo.appendChild(eventText);
+        } else {
+            const noEvent = document.createElement('div');
+            noEvent.className = 'no-event';
+            noEvent.textContent = '予定なし';
+            eventInfo.appendChild(noEvent);
+        }
+        
+        dayItem.appendChild(dateInfo);
+        dayItem.appendChild(eventInfo);
+        calendarGrid.appendChild(dayItem);
+        
         currentDate.setDate(currentDate.getDate() + 1);
     }
+}
+
+function clearSchedule() {
+    scheduleEvents = [];
+    calendarGrid.innerHTML = '';
 }
 
 function clearAll() {
@@ -281,7 +307,5 @@ function clearAll() {
     menstruationInput.disabled = false;
     hcgInput.disabled = false;
     etInput.disabled = false;
-    scheduleEvents = [];
-    scheduleList.innerHTML = '';
-    calendar.innerHTML = '';
+    clearSchedule();
 }

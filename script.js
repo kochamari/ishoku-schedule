@@ -365,6 +365,17 @@ function displayMonthCalendar() {
     today.setHours(0, 0, 0, 0);
     
     const startDate = new Date(scheduleEvents[0].date);
+    const displayMonth = startDate.getMonth();
+    const displayYear = startDate.getFullYear();
+    
+    // カレンダーの年月表示を更新
+    const monthDisplay = document.getElementById('calendar-month-display');
+    if (monthDisplay) {
+        monthDisplay.innerHTML = `
+            <div class="month-info">${displayYear}年 ${displayMonth + 1}月</div>
+        `;
+    }
+    
     startDate.setDate(1);
     const endDate = addDays(scheduleEvents[scheduleEvents.length - 1].date, 7);
     
@@ -377,11 +388,50 @@ function displayMonthCalendar() {
     }
     
     const currentDate = new Date(startDate);
+    let currentMonth = startDate.getMonth();
+    
     while (currentDate <= endDate) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'calendar-day';
         
-        if (currentDate.getMonth() !== startDate.getMonth()) {
+        // 月が変わったら月の区切りを表示
+        if (currentDate.getMonth() !== currentMonth) {
+            currentMonth = currentDate.getMonth();
+            
+            // 残りのマスを埋める
+            const remainingDays = 7 - (calendar.children.length % 7);
+            if (remainingDays < 7) {
+                for (let i = 0; i < remainingDays; i++) {
+                    const emptyDay = document.createElement('div');
+                    emptyDay.className = 'calendar-day other-month';
+                    calendar.appendChild(emptyDay);
+                }
+            }
+            
+            // 月の区切り表示を追加
+            const monthSeparator = document.createElement('div');
+            monthSeparator.className = 'month-separator';
+            monthSeparator.textContent = `${currentDate.getFullYear()}年 ${currentDate.getMonth() + 1}月`;
+            calendar.appendChild(monthSeparator);
+            
+            // 曜日ヘッダーを再表示
+            weekDays.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-header';
+                header.textContent = day;
+                calendar.appendChild(header);
+            });
+            
+            // 月初めの空白
+            const firstDayOfMonth = currentDate.getDay();
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                calendar.appendChild(emptyDay);
+            }
+        }
+        
+        if (currentDate.getMonth() !== displayMonth) {
             dayDiv.classList.add('other-month');
         }
         
@@ -421,6 +471,10 @@ function clearSchedule() {
     const startDateInfo = document.getElementById('schedule-start-date');
     if (startDateInfo) {
         startDateInfo.textContent = '';
+    }
+    const monthDisplay = document.getElementById('calendar-month-display');
+    if (monthDisplay) {
+        monthDisplay.innerHTML = '';
     }
 }
 

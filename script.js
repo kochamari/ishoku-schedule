@@ -93,23 +93,8 @@ function parseMMDD(mmdd) {
         return null;
     }
     
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth();
-    
-    let year = currentYear;
-    
-    // 入力された月が現在の月より前の場合は来年とする
-    if (month < currentMonth) {
-        year = currentYear + 1;
-    } else if (month === currentMonth) {
-        // 同じ月の場合、日付で判断
-        const currentDay = today.getDate();
-        if (day < currentDay) {
-            year = currentYear + 1;
-        }
-    }
-    
+    // 常に現在の年を使用
+    const year = new Date().getFullYear();
     return new Date(year, month, day);
 }
 
@@ -140,6 +125,16 @@ function calculateSchedule() {
     }
     
     if (baseDateType === 'menstruation') {
+        // D1からD14まで追加
+        for (let i = 0; i < 14; i++) {
+            const dayNum = i + 1;
+            scheduleEvents.push({
+                date: addDays(baseDate, i),
+                event: `生理D${dayNum}`,
+                isDayCount: true
+            });
+        }
+        
         scheduleEvents.push({
             date: addDays(baseDate, 11),
             event: '生理D12 卵胞チェック、hCG注射',
@@ -259,15 +254,18 @@ function displayListCalendar() {
         const dayItem = document.createElement('div');
         dayItem.className = 'calendar-day-item';
         
-        const event = scheduleEvents.find(e => 
+        const events = scheduleEvents.filter(e => 
             e.date.getFullYear() === currentDate.getFullYear() &&
             e.date.getMonth() === currentDate.getMonth() &&
             e.date.getDate() === currentDate.getDate()
         );
         
-        if (event) {
+        const mainEvent = events.find(e => !e.isDayCount);
+        const dayCountEvent = events.find(e => e.isDayCount);
+        
+        if (mainEvent) {
             dayItem.classList.add('has-event');
-            if (event.highlight) {
+            if (mainEvent.highlight) {
                 dayItem.classList.add('highlight-event');
             }
         }
@@ -296,12 +294,19 @@ function displayListCalendar() {
         const eventInfo = document.createElement('div');
         eventInfo.className = 'event-info';
         
-        if (event) {
+        if (dayCountEvent) {
+            const dayCountText = document.createElement('div');
+            dayCountText.className = 'day-count-text';
+            dayCountText.textContent = dayCountEvent.event;
+            eventInfo.appendChild(dayCountText);
+        }
+        
+        if (mainEvent) {
             const eventText = document.createElement('div');
             eventText.className = 'event-text';
-            eventText.textContent = event.event;
+            eventText.textContent = mainEvent.event;
             eventInfo.appendChild(eventText);
-        } else {
+        } else if (!dayCountEvent) {
             const noEvent = document.createElement('div');
             noEvent.className = 'no-event';
             noEvent.textContent = '予定なし';
@@ -358,20 +363,22 @@ function displayMonthCalendar() {
         dayNumber.textContent = currentDate.getDate();
         dayDiv.appendChild(dayNumber);
         
-        const event = scheduleEvents.find(e => 
+        const events = scheduleEvents.filter(e => 
             e.date.getFullYear() === currentDate.getFullYear() &&
             e.date.getMonth() === currentDate.getMonth() &&
             e.date.getDate() === currentDate.getDate()
         );
         
-        if (event) {
+        const mainEvent = events.find(e => !e.isDayCount);
+        
+        if (mainEvent) {
             dayDiv.classList.add('has-event');
-            if (event.highlight) {
+            if (mainEvent.highlight) {
                 dayDiv.classList.add('highlight-event');
             }
             const eventDiv = document.createElement('div');
             eventDiv.className = 'calendar-event';
-            eventDiv.textContent = event.event;
+            eventDiv.textContent = mainEvent.event;
             dayDiv.appendChild(eventDiv);
         }
         

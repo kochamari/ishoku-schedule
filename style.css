@@ -169,6 +169,13 @@ button {
     font-weight: 500;
 }
 
+.day-count-text {
+    font-size: 0.8rem;
+    color: #e74c3c;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
 .no-event {
     color: #bdc3c7;
     font-size: 0.85rem;

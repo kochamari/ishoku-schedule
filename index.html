@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IVF-ETスケジュールアプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>IVF-ETスケジュール管理</h1>
+        
+        <div class="input-section">
+            <h2>日付を入力してください</h2>
+            <div class="input-group">
+                <label for="menstruation-date">生理開始日 (MM/DD)</label>
+                <input type="text" id="menstruation-date" placeholder="MM/DD" maxlength="5">
+            </div>
+            <div class="input-group">
+                <label for="hcg-date">hCG注射日 (MM/DD)</label>
+                <input type="text" id="hcg-date" placeholder="MM/DD" maxlength="5">
+            </div>
+            <div class="input-group">
+                <label for="et-date">移植日ET0 (MM/DD)</label>
+                <input type="text" id="et-date" placeholder="MM/DD" maxlength="5">
+            </div>
+            <button id="calculate-btn">スケジュールを計算</button>
+            <button id="clear-btn">クリア</button>
+        </div>
+
+        <div class="schedule-section">
+            <h2>スケジュール</h2>
+            <div id="schedule-list"></div>
+        </div>
+
+        <div class="calendar-section">
+            <h2>カレンダー</h2>
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

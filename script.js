@@ -230,8 +230,20 @@ function displayListCalendar() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    const startDate = new Date(today);
+    let baseDate = null;
+    if (menstruationInput.value) {
+        baseDate = parseMMDD(menstruationInput.value);
+    } else if (hcgInput.value) {
+        baseDate = parseMMDD(hcgInput.value);
+    } else if (etInput.value) {
+        baseDate = parseMMDD(etInput.value);
+    }
+    
+    const startDate = new Date(baseDate);
     const endDate = addDays(startDate, 30);
+    
+    const startDateInfo = document.getElementById('schedule-start-date');
+    startDateInfo.textContent = `${startDate.getFullYear()}年${startDate.getMonth() + 1}月${startDate.getDate()}日から30日間の表示`;
     
     const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
     
@@ -269,7 +281,7 @@ function displayListCalendar() {
         
         const dateWeekday = document.createElement('div');
         dateWeekday.className = 'date-weekday';
-        dateWeekday.textContent = `${currentDate.getMonth() + 1}月 ${weekDays[currentDate.getDay()]}`;
+        dateWeekday.textContent = `${currentDate.getFullYear()}年${currentDate.getMonth() + 1}月 ${weekDays[currentDate.getDay()]}`;
         
         dateInfo.appendChild(dateNumber);
         dateInfo.appendChild(dateWeekday);
@@ -365,6 +377,10 @@ function clearSchedule() {
     scheduleEvents = [];
     calendarGrid.innerHTML = '';
     calendar.innerHTML = '';
+    const startDateInfo = document.getElementById('schedule-start-date');
+    if (startDateInfo) {
+        startDateInfo.textContent = '';
+    }
 }
 
 function clearAll() {

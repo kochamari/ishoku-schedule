@@ -93,17 +93,24 @@ function parseMMDD(mmdd) {
         return null;
     }
     
-    const year = new Date().getFullYear();
-    let date = new Date(year, month, day);
-    
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
     
-    if (date < today) {
-        date = new Date(year + 1, month, day);
+    let year = currentYear;
+    
+    // 入力された月が現在の月より前の場合は来年とする
+    if (month < currentMonth) {
+        year = currentYear + 1;
+    } else if (month === currentMonth) {
+        // 同じ月の場合、日付で判断
+        const currentDay = today.getDate();
+        if (day < currentDay) {
+            year = currentYear + 1;
+        }
     }
     
-    return date;
+    return new Date(year, month, day);
 }
 
 function addDays(date, days) {

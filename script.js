@@ -8,9 +8,35 @@ const clearBtn = document.getElementById('clear-btn');
 const scheduleList = document.getElementById('schedule-list');
 const calendar = document.getElementById('calendar');
 
-menstruationInput.addEventListener('input', () => disableOtherInputs('menstruation'));
-hcgInput.addEventListener('input', () => disableOtherInputs('hcg'));
-etInput.addEventListener('input', () => disableOtherInputs('et'));
+menstruationInput.addEventListener('input', (e) => {
+    formatInput(e.target);
+    disableOtherInputs('menstruation');
+    if (e.target.value.match(/^\d{2}\/\d{2}$/)) {
+        calculateSchedule();
+    }
+});
+hcgInput.addEventListener('input', (e) => {
+    formatInput(e.target);
+    disableOtherInputs('hcg');
+    if (e.target.value.match(/^\d{2}\/\d{2}$/)) {
+        calculateSchedule();
+    }
+});
+etInput.addEventListener('input', (e) => {
+    formatInput(e.target);
+    disableOtherInputs('et');
+    if (e.target.value.match(/^\d{2}\/\d{2}$/)) {
+        calculateSchedule();
+    }
+});
+
+function formatInput(input) {
+    let value = input.value.replace(/[^\d]/g, '');
+    if (value.length >= 3) {
+        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+    }
+    input.value = value;
+}
 calculateBtn.addEventListener('click', calculateSchedule);
 clearBtn.addEventListener('click', clearAll);
 
@@ -32,16 +58,23 @@ function disableOtherInputs(activeInput) {
 }
 
 function parseMMDD(mmdd) {
-    const match = mmdd.match(/^(\d{2})\/(\d{2})$/);
+    const match = mmdd.match(/^(\d{1,2})\/(\d{1,2})$/);
     if (!match) return null;
     
     const month = parseInt(match[1]) - 1;
     const day = parseInt(match[2]);
-    const year = new Date().getFullYear();
     
+    if (month < 0 || month > 11 || day < 1 || day > 31) {
+        return null;
+    }
+    
+    const year = new Date().getFullYear();
     let date = new Date(year, month, day);
     
-    if (date < new Date()) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (date < today) {
         date = new Date(year + 1, month, day);
     }
     

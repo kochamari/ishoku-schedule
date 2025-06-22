@@ -8,27 +8,15 @@ const calendarGrid = document.getElementById('calendar-grid');
 const calendar = document.getElementById('calendar');
 
 menstruationInput.addEventListener('input', (e) => {
-    formatInput(e.target);
-    disableOtherInputs('menstruation');
-    if (e.target.value.match(/^\d{2}\/\d{2}$/)) {
-        calculateSchedule();
-    }
+    handleInput(e.target, 'menstruation');
 });
 
 hcgInput.addEventListener('input', (e) => {
-    formatInput(e.target);
-    disableOtherInputs('hcg');
-    if (e.target.value.match(/^\d{2}\/\d{2}$/)) {
-        calculateSchedule();
-    }
+    handleInput(e.target, 'hcg');
 });
 
 etInput.addEventListener('input', (e) => {
-    formatInput(e.target);
-    disableOtherInputs('et');
-    if (e.target.value.match(/^\d{2}\/\d{2}$/)) {
-        calculateSchedule();
-    }
+    handleInput(e.target, 'et');
 });
 
 clearBtn.addEventListener('click', clearAll);
@@ -51,12 +39,32 @@ etInput.addEventListener('focus', () => {
     }
 });
 
-function formatInput(input) {
-    let value = input.value.replace(/[^\d]/g, '');
-    if (value.length >= 3) {
-        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+function handleInput(input, inputType) {
+    // 数字のみを抽出
+    let numbers = input.value.replace(/[^\d]/g, '');
+    
+    // 4文字を超えた場合は切り詰める
+    if (numbers.length > 4) {
+        numbers = numbers.slice(0, 4);
     }
-    input.value = value;
+    
+    // フォーマット
+    let formattedValue = '';
+    if (numbers.length >= 3) {
+        formattedValue = numbers.slice(0, 2) + '/' + numbers.slice(2);
+    } else {
+        formattedValue = numbers;
+    }
+    
+    // 値を設定
+    input.value = formattedValue;
+    
+    disableOtherInputs(inputType);
+    
+    // 完全な形式かチェック
+    if (formattedValue.match(/^\d{2}\/\d{2}$/)) {
+        calculateSchedule();
+    }
 }
 
 function disableOtherInputs(activeInput) {

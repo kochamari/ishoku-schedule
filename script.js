@@ -135,6 +135,15 @@ function calculateSchedule() {
             });
         }
         
+        // ET0からET15まで追加
+        for (let i = 0; i <= 15; i++) {
+            scheduleEvents.push({
+                date: addDays(baseDate, 14 + i),
+                event: `ET${i}`,
+                isDayCount: true
+            });
+        }
+        
         scheduleEvents.push({
             date: addDays(baseDate, 11),
             event: '生理D12 卵胞チェック、hCG注射',
@@ -163,6 +172,15 @@ function calculateSchedule() {
             highlight: true
         });
     } else if (baseDateType === 'hcg') {
+        // ET0からET15まで追加
+        for (let i = 0; i <= 15; i++) {
+            scheduleEvents.push({
+                date: addDays(baseDate, 3 + i),
+                event: `ET${i}`,
+                isDayCount: true
+            });
+        }
+        
         scheduleEvents.push({
             date: baseDate,
             event: '生理D12 卵胞チェック、hCG注射',
@@ -191,6 +209,15 @@ function calculateSchedule() {
             highlight: true
         });
     } else if (baseDateType === 'et') {
+        // ET0からET15まで追加
+        for (let i = 0; i <= 15; i++) {
+            scheduleEvents.push({
+                date: addDays(baseDate, i),
+                event: `ET${i}`,
+                isDayCount: true
+            });
+        }
+        
         scheduleEvents.push({
             date: addDays(baseDate, -3),
             event: '生理D12 卵胞チェック、hCG注射',

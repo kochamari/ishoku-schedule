@@ -447,6 +447,14 @@ function displayMonthCalendar() {
         );
         
         const mainEvent = events.find(e => !e.isDayCount);
+        const dayCountEvent = events.find(e => e.isDayCount);
+        
+        if (dayCountEvent) {
+            const dayCountDiv = document.createElement('div');
+            dayCountDiv.className = 'calendar-day-count';
+            dayCountDiv.textContent = dayCountEvent.event;
+            dayDiv.appendChild(dayCountDiv);
+        }
         
         if (mainEvent) {
             dayDiv.classList.add('has-event');
